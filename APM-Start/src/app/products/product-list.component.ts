@@ -1,22 +1,28 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnDestroy, OnInit } from "@angular/core";
+import { Subscription } from "rxjs";
 import { IProduct } from "./product";
+import { ProductService } from "./product.service";
 
 
 @Component({
-    selector: 'pm-products',
+    // selector: 'pm-products',
     templateUrl: './product-list.component.html',
     styleUrls: ['./product-list.component.css']
 
 })
 
 
-export class ProductListComponeent implements OnInit{
+export class ProductListComponeent implements OnInit, OnDestroy{
     pageTitle:string = 'Product List!';
     imageWidth: number = 50;
     imageMargin: number = 2;
     showImage: boolean = false;
     // listFilter: string = 'cart';
     private _listFilter: string = '';
+    errorMessage: string = '';
+    sub!: Subscription;
+
+    constructor(private productService: ProductService) {};
 
     get listFilter(): string{
       return this._listFilter;
@@ -28,38 +34,32 @@ export class ProductListComponeent implements OnInit{
       console.log('Setter is: ',value);
     }
 
-
     filteredProducts: IProduct[] = [];
-    products: IProduct[] = [
-        {
-          "productId": 2,
-          "productName": "Garden Cart",
-          "productCode": "GDN-0023",
-          "releaseDate": "March 18, 2021",
-          "description": "15 gallon capacity rolling garden cart",
-          "price": 32.99,
-          "starRating": 2,
-          "imageUrl": "assets/images/garden_cart.png"
-        },
-        {
-          "productId": 5,
-          "productName": "Hammer",
-          "productCode": "TBX-0048",
-          "releaseDate": "May 21, 2021",
-          "description": "Curved claw steel hammer",
-          "price": 8.9,
-          "starRating": 4.8,
-          "imageUrl": "assets/images/hammer.png"
-        }
-  ];
+    products: IProduct[] = [];
 
   toggleImage():void {
     this.showImage = !this.showImage;
   }
 
   ngOnInit(): void {
+    this.sub = this.productService.getProducts().subscribe({
+      next: products => {
+        this.products = products;
+        console.log(products);
+        this.filteredProducts = this.products;
+      },
+      error: err => this.errorMessage = err,
+    });
+
+    this.filteredProducts = this.products;
       console.log('On init');
-      this.listFilter= ' cart';
+
+    // this.ngOnDestroy();
+  }
+
+
+  ngOnDestroy(): void {
+    this.sub.unsubscribe();
   }
 
   performFilter(filterBy: string): IProduct[] {

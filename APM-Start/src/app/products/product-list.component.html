@@ -51,7 +51,10 @@
                         (ratingClicked)='onRatingClicked($event)'
                         [productName]='product.productName'
                         ></pm-star></td>
-                  </tr>l
+                        <td><a [routerLink]="['/products', product.poductId]">
+                          {{}}
+                        </a></td>
+                  </tr>
               </tbody>
             </table>
           </div>
