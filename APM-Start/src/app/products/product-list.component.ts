@@ -8,7 +8,7 @@ import { ProductService } from './product.service';
   templateUrl: './product-list.component.html',
   styleUrls: ['./product-list.component.css'],
 })
-export class ProductListComponeent implements OnInit, OnDestroy {
+export class ProductListComponent implements OnInit, OnDestroy {
   pageTitle: string = 'Product List!';
   imageWidth: number = 50;
   imageMargin: number = 2;
@@ -17,6 +17,7 @@ export class ProductListComponeent implements OnInit, OnDestroy {
   sub!: Subscription;
   filteredProducts: IProduct[] = [];
   products: IProduct[] = [];
+  selectedProductId: number | undefined;
 
   constructor(private productService: ProductService) {}
 
@@ -41,7 +42,7 @@ export class ProductListComponeent implements OnInit, OnDestroy {
     this.sub = this.productService.getProducts().subscribe({
       next: (products) => {
         this.products = products;
-        console.log(products);
+        // console.log(products);
         this.filteredProducts = this.products;
       },
       error: (err) => (this.errorMessage = err),
@@ -66,5 +67,9 @@ export class ProductListComponeent implements OnInit, OnDestroy {
 
   onRatingClicked(message: string): void {
     this.pageTitle = 'Product List: ' + message;
+  }
+
+  getProductList(): IProduct[] {
+    return this.products;
   }
 }
