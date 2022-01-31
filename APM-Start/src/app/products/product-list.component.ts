@@ -30,8 +30,22 @@ export class ProductListComponent implements OnInit, OnDestroy {
 
   set listFilter(value: string) {
     this._listFilter = value;
-    this.filteredProducts = this.performFilter(value);
+    this.filteredProducts = this.performFilter(
+      value,
+      this.listFilterByPriceFrom
+    );
     console.log('Setter is: ', value);
+  }
+
+  private _listFilterByPriceFrom: number = 0;
+
+  get listFilterByPriceFrom(): number {
+    return this._listFilterByPriceFrom;
+  }
+
+  set listFilterByPriceFrom(price: number) {
+    this._listFilterByPriceFrom = price;
+    this.filteredProducts = this.performFilter(this.listFilter, price);
   }
 
   toggleImage(): void {
@@ -58,11 +72,15 @@ export class ProductListComponent implements OnInit, OnDestroy {
     this.sub.unsubscribe();
   }
 
-  performFilter(filterBy: string): IProduct[] {
+  performFilter(filterBy: string, price: number): IProduct[] {
+    console.log('Lefut a filter');
     filterBy = filterBy.toLowerCase();
-    return this.products.filter((product: IProduct) =>
-      product.productName.toLowerCase().includes(filterBy)
-    );
+
+    return this.products
+      .filter((product: IProduct) =>
+        product.productName.toLowerCase().includes(filterBy)
+      )
+      .filter((product) => product.price > price);
   }
 
   onRatingClicked(message: string): void {

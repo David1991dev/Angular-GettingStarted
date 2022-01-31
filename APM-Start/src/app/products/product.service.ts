@@ -17,26 +17,25 @@ export class ProductService {
 
   getProducts(): Observable<IProduct[]> {
     return this.http.get<IProduct[]>(this.productUrl).pipe(
-      // tap((data) => console.log(JSON.stringify(data))),
+      tap((data) => console.log(data)),
+      map((products: IProduct[]) =>
+        products.filter((product) => product.price > 4)
+      ),
       catchError(this.handleError)
     );
   }
-  // getSelectedProductByObservable(id: number): Observable<IProduct[]> {
-  //   return this.http
-  //     .get<IProduct[]>(this.productUrl)
-  //     .pipe(filter((data) => data.find((data) => data.productId == id)));
-  // }
 
-  getSelectedProduct(id: number): any {
-    console.log('Az id a service-ből: ' + id);
-    this.getProducts().subscribe({
-      next: (products) => {
-        const result = products.filter((item) => item['productId'] == id);
-        console.log('Result is:  ' + result);
-        return result;
-      },
-    });
+  getProduct(id: number): Observable<IProduct | undefined> {
+    return this.getProducts().pipe(
+      tap((data) => console.log(data)),
+      map((products: IProduct[]) => products.find((p) => p.productId == id))
+    );
   }
+
+  // getSelectedProduct(id: number): Observable<IProduct | undefined>  {
+  //   return this.getProducts().pipe(filter(product: =>))
+
+  //   };
 
   private handleError(err: HttpErrorResponse) {
     let errorMessage = '';

@@ -24,17 +24,13 @@ export class ProductDetailComponent implements OnInit {
     const id: number = Number(this.rout.snapshot.paramMap.get('id'));
     this.pageTitle += `:  ${id}`;
     this.rout.snapshot.paramMap.get('id');
-
-    this.product = this.productService.getSelectedProduct(id);
-    console.log('Product is: ' + this.product);
-
-    // this.sub = this.productService.getProducts().subscribe({
-    //   next: (products) => {
-    //     const selected = products.filter((item) => item['productId'] == id);
-    //     console.log('Selected is: ' + selected);
-    //     this.product = selected[0];
-    //   },
-    // });
+    this.getProduct(id);
+  }
+  getProduct(id: number): void {
+    this.productService.getProduct(id).subscribe({
+      next: (product) => (this.product = product),
+      error: (err) => console.log(err),
+    });
   }
 
   onBack(): void {
